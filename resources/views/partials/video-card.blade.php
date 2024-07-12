@@ -1,6 +1,6 @@
 <div class="block bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-    <a href="{{ $video['url'] }}" onmouseover="startOscillating('{{ $video['id'] }}')"
-        onmouseout="stopOscillating('{{ $video['id'] }}')">
+    <a href="{{ url('/') }}/video/{{ $video['video_id'] }}/{{ $video['url_title'] }}"
+        onmouseover="startOscillating('{{ $video['id'] }}')" onmouseout="stopOscillating('{{ $video['id'] }}')">
         <div class="relative group">
             <img id="thumbnail-{{ $video['id'] }}" src="{{ $video['default_thumb'] }}"
                 data-default-thumb="{{ $video['default_thumb'] }}" data-thumbs="{{ json_encode($video['thumbs']) }}"
