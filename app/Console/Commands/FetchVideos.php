@@ -20,8 +20,8 @@ class FetchVideos extends Command
 
     public function handle()
     {
-        // $this->videoService->fetchEpornerVideos();
-        // $this->info('Eporner videos fetched successfully.');
+        $this->videoService->fetchEpornerVideos();
+        $this->info('Eporner videos fetched successfully.');
 
         $this->videoService->fetchRedtubeVideos();
         $this->info('Redtube videos fetched successfully.');
@@ -29,6 +29,5 @@ class FetchVideos extends Command
         return Command::SUCCESS;
     }
 }
-
 
 // php artisan videos:fetch
