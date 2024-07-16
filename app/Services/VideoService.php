@@ -18,7 +18,7 @@ class VideoService
             $isActive = false;
 
             if ($provider === 'eporner') {
-                $response = $this->curlRequest("https://www.eporner.com/api/v2/video/id/?id={$videoId}&thumbsize=medium&format=json");
+                $response = $this->curlRequest("https://www.eporner.com/api/v2/video/id/?id={$videoId}");
                 if (isset($response['id'])) {
                     $isActive = true;
                 }

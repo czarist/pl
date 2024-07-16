@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Request;
 class VideoGalleryController extends Controller
 {
 
-    public function index($page = 1)
+    public function index(int $page = 1)
     {
         $paginator = Video::with(['tags', 'thumbs'])->paginate(20, ['*'], 'page', $page);
 
@@ -65,7 +65,7 @@ class VideoGalleryController extends Controller
         return view('video.show', compact('video'));
     }
 
-    private function normalizeTitle($title)
+    private function normalizeTitle(string $title)
     {
         $title = preg_replace('/[^A-Za-z0-9]+/', '-', $title);
         $title = strtolower($title);
