@@ -35,7 +35,7 @@
 
         <!-- Main Content -->
         <div class="w-full lg:w-3/4">
-            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg mb-8">
                 <div class="relative group">
                     <iframe src="{{ $video->embed_url }}" frameborder="0" class="w-full h-64 sm:h-96"
                         allowfullscreen></iframe>
@@ -59,9 +59,19 @@
                     <p class="text-gray-400 mt-2">
                         <i class="fas fa-tags mr-1"></i>
                         @foreach ($video->tags as $tag)
-                            <a href="/tags/{{ $tag->tag_name }}" class="mr-2 mb-2 hover:underline">{{ $tag->tag_name }}</a>
+                            <a href="/tag/{{ $tag->tag_name }}" class="mr-2 mb-2 hover:underline">{{ $tag->tag_name }}</a>
                         @endforeach
                     </p>
+                </div>
+            </div>
+
+            <!-- Related Videos -->
+            <div class="mt-8">
+                <h3 class="text-2xl font-semibold text-white mb-4">Related Videos</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    @foreach ($relatedVideos as $relatedVideo)
+                        @include('partials.video-card', ['video' => $relatedVideo])
+                    @endforeach
                 </div>
             </div>
 
@@ -78,3 +88,24 @@
         </div>
     </div>
 @endsection
+
+<script>
+    let oscillatingIntervals = {};
+
+    function startOscillating(videoId) {
+        const img = document.getElementById('thumbnail-' + videoId);
+        const thumbs = JSON.parse(img.dataset.thumbs.replace(/&quot;/g, '"'));
+        let index = 0;
+
+        oscillatingIntervals[videoId] = setInterval(() => {
+            img.src = thumbs[index].src;
+            index = (index + 1) % thumbs.length;
+        }, 500);
+    }
+
+    function stopOscillating(videoId) {
+        clearInterval(oscillatingIntervals[videoId]);
+        const img = document.getElementById('thumbnail-' + videoId);
+        img.src = img.dataset.defaultThumb;
+    }
+</script>

@@ -75,7 +75,8 @@ class VideoService
                         'added' => $videoData['added'],
                     ]);
 
-                    foreach (explode(', ', $videoData['keywords']) as $keyword) {
+                    foreach (explode(',', $videoData['keywords']) as $keyword) {
+                        $keyword = trim($keyword); // Remova espaços em branco extras
                         $processedTag = $this->processTag($this->convertToUtf8($keyword));
                         if ($processedTag) {
                             try {
@@ -232,13 +233,19 @@ class VideoService
 
     private function processTag($tag)
     {
-        $words = explode(' ', $tag);
+        $tag = preg_replace('/[^A-Za-z0-9 ]/', '', $tag);
+        $tag = preg_replace('/\s+/', '-', $tag);
+
+        if (strlen($tag) < 2) {
+            return false;
+        }
+
+        $words = explode('-', $tag);
         if (count($words) > 2) {
             return false;
         }
-        if (count($words) == 2) {
-            return implode('-', $words);
-        }
-        return $tag;
+
+        return implode('-', $words);
     }
+
 }

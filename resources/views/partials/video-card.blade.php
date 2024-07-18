@@ -1,5 +1,5 @@
 <div class="block bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-    <a href="{{ url('/') }}/video/{{ $video['video_id'] }}/{{ $video['url_title'] }}"
+    <a href="{{ url('/') }}/video/{{ $video['video_id'] }}/{{ $video['url_title'] ? $video['url_title'] : 'video' }}"
         onmouseover="startOscillating('{{ $video['id'] }}')" onmouseout="stopOscillating('{{ $video['id'] }}')">
         <div class="relative group">
             <img id="thumbnail-{{ $video['id'] }}" src="{{ $video['default_thumb'] }}"
@@ -33,9 +33,15 @@
         <p class="text-gray-400 mt-2">
             <i class="fas fa-tags mr-1"></i>
 
-            @foreach ($video['tags'] as $tag)
-                <a href="/tags/{{ $tag }}" class="mr-2 mb-2 hover:underline">{{ $tag }}</a>
-            @endforeach
+            @if (isset($isRelated))
+                @foreach ($video['tags'] as $tag)
+                    <a href="/tag/{{ $tag->tag_name }}" class="mr-2 mb-2 hover:underline">{{ $tag->tag_name }}</a>
+                @endforeach
+            @else
+                @foreach ($video['tags'] as $tag)
+                    <a href="/tag/{{ $tag }}" class="mr-2 mb-2 hover:underline">{{ $tag }}</a>
+                @endforeach
+            @endif
         </p>
     </div>
 </div>

@@ -2,16 +2,13 @@
 
 @section('content')
     <div class="container mx-auto p-8">
-        <div class="flex justify-between items-center mb-6">
-            <div>
-            </div>
-            <div class="flex items-center space-x-4">
-                <button class="bg-gray-700 px-4 py-2 rounded">Filters</button>
-                <input type="text" placeholder="Search Video Projects" class="bg-gray-800 px-4 py-2 rounded">
-                <button class="bg-gray-700 px-4 py-2 rounded">Sort: Created</button>
-            </div>
-        </div>
         <div class="space-y-8">
+            @if (isset($tag))
+                <h2 class="text-xl font-bold mb-6">Videos tagged with "{{ $tag }}"</h2>
+            @endif
+            @if (isset($searchTerm))
+                <h2 class="text-xl font-bold mb-6">Videos searched by "{{ $searchTerm }}"</h2>
+            @endif
             <div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     @foreach ($videos as $video)
