@@ -13,6 +13,8 @@ class VideoGalleryController extends Controller
 
     public function index(int $page = 1)
     {
+        $default_title = 'Home' . " Page " . $page;
+        $default_description = "the best free adult content";
         $paginator = Video::with(['tags', 'thumbs'])
             ->orderBy('views', 'desc')
             ->paginate(20, ['*'], 'page', $page);
@@ -27,6 +29,8 @@ class VideoGalleryController extends Controller
                 $paginator->currentPage(),
                 ['path' => Request::url(), 'query' => Request::query()]
             ),
+            'default_title' => $default_title,
+            'default_description' => $default_description,
         ]);
     }
 
@@ -37,6 +41,9 @@ class VideoGalleryController extends Controller
         if (!$tagModel) {
             return redirect('/404');
         }
+
+        $default_title = 'Tag: ' . $tag . " Page $page";
+        $default_description = 'Content tagged with ' . $tag;
 
         $paginator = Video::whereHas('tags', function ($query) use ($tag) {
             $query->where('tag_name', $tag);
@@ -56,6 +63,8 @@ class VideoGalleryController extends Controller
                 ['path' => Request::url(), 'query' => Request::query()]
             ),
             'tag' => $tag,
+            'default_title' => $default_title,
+            'default_description' => $default_description,
         ]);
     }
 
@@ -65,6 +74,9 @@ class VideoGalleryController extends Controller
         if (!$searchTerm) {
             return redirect()->back();
         }
+
+        $default_title = 'Search Results for: ' . $searchTerm . ' - Page ' . $page;
+        $default_description = 'Videos matching the search term: ' . $searchTerm;
 
         $paginator = Video::where('title', 'like', '%' . $searchTerm . '%')
             ->orWhere('keywords', 'like', '%' . $searchTerm . '%')
@@ -86,6 +98,8 @@ class VideoGalleryController extends Controller
                 ['path' => Request::url(), 'query' => Request::query()]
             ),
             'searchTerm' => $searchTerm,
+            'default_title' => $default_title,
+            'default_description' => $default_description,
         ]);
     }
 
@@ -168,9 +182,14 @@ class VideoGalleryController extends Controller
             });
         });
 
+        $default_title = 'Tag Page - Best Tags';
+        $default_description = 'Explore the best tags for our video content.';
+
         return view('tags.index', [
             'groupedTags' => $formattedTags,
             'letters' => $letters,
+            'default_title' => $default_title,
+            'default_description' => $default_description,
         ]);
     }
 
@@ -182,6 +201,10 @@ class VideoGalleryController extends Controller
             return redirect('/404');
         }
 
+        $default_title = $video->title;
+        $default_description = $video->keywords;
+        $page_thumb = $video->thumbs->first()->src ?? asset('icon.png');
+
         $relatedVideos = Video::whereHas('tags', function ($query) use ($video) {
             return $query->whereIn('tag_name', $video->tags->pluck('tag_name'));
         })
@@ -190,7 +213,9 @@ class VideoGalleryController extends Controller
             ->limit(9)
             ->get();
 
-        return view('video.show', compact('video', 'relatedVideos', 'isRelated'));
+        $isVideoPage = true;
+
+        return view('video.show', compact('video', 'relatedVideos', 'isRelated', 'default_title', 'default_description', 'page_thumb', 'isVideoPage'));
     }
 
     private function normalizeTitle(string $title)

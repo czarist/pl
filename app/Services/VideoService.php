@@ -236,7 +236,7 @@ class VideoService
         $tag = preg_replace('/[^A-Za-z0-9 ]/', '', $tag);
         $tag = preg_replace('/\s+/', '-', $tag);
 
-        if (strlen($tag) < 2) {
+        if (strlen($tag) < 2 || strlen($tag) > 12) {
             return false;
         }
 

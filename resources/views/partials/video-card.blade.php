@@ -1,5 +1,5 @@
 <div class="block bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-    <a href="{{ url('/') }}/video/{{ $video['video_id'] }}/{{ $video['url_title'] ? $video['url_title'] : 'video' }}"
+    <a href="{{ url('/') }}/video/{{ $video['video_id'] }}/{{ $video['url_title'] ? $video['url_title'] : 'video ' }}"
         onmouseover="startOscillating('{{ $video['id'] }}')" onmouseout="stopOscillating('{{ $video['id'] }}')">
         <div class="relative group">
             <img id="thumbnail-{{ $video['id'] }}" src="{{ $video['default_thumb'] }}"

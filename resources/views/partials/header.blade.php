@@ -2,7 +2,7 @@
     <div class="container mx-auto flex justify-between items-center">
         <div class="text-lg font-bold">
             <a href="{{ url('/') }}" class="text-white hover:text-blue-400 transition-colors duration-300">
-                <i class="fas fa-video mr-2"></i>Video Gallery
+                <img id="icon-header" class="w90" src="{{ asset('icon.png') }}" alt="Video Gallery">
             </a>
         </div>
         <div class="flex items-center space-x-4">
@@ -34,6 +34,16 @@
         /* Make space for fixed header */
     }
 
+    .w50 {
+        width: 50px;
+        transition: 0.5s;
+    }
+
+    .w90 {
+        width: 90px;
+        transition: 0.5s;
+    }
+
     #header {
         transition: top 0.3s;
         position: absolute;
@@ -51,11 +61,18 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const header = document.getElementById('header');
+        const iconHeader = document.getElementById('icon-header');
+
         window.addEventListener('scroll', function() {
             if (window.scrollY > 0) {
                 header.classList.add('sticky');
+                iconHeader.classList.add('w50');
+                iconHeader.classList.remove('w90');
+
             } else {
                 header.classList.remove('sticky');
+                iconHeader.classList.remove('w50');
+                iconHeader.classList.add('w90');
             }
         });
     });

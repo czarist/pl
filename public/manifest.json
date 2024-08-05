@@ -1,0 +1,21 @@
+{
+    "name": "Porn Rooster",
+    "short_name": "PornRooster",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#1F2937",
+    "theme_color": "#ffffff",
+    "description": "Discover an extensive library of free adult videos. Enjoy the highest quality HD content available.",
+    "icons": [
+        {
+            "src": "/icon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/icon.ico",
+            "sizes": "100x100",
+            "type": "image/ico"
+        }
+    ]
+}
