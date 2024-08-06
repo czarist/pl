@@ -6,11 +6,11 @@
             </a>
         </div>
         <div class="flex items-center space-x-4">
-            <form action="{{ route('videos.search') }}" method="GET" class="flex items-center space-x-4">
+            <form action="{{ route('videos.search') }}" method="GET" class="hidden md:flex items-center space-x-4">
                 <input name="search" type="text" placeholder="Search Video"
                     class="bg-gray-700 text-white px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400">
             </form>
-            <nav class="flex space-x-4">
+            <nav class="hidden md:flex space-x-4">
                 <a href="{{ url('/') }}" class="text-gray-300 hover:text-white transition-colors duration-300"><i
                         class="fas fa-home mr-1"></i>Home</a>
                 <a href="{{ route('tags.index') }}"
@@ -21,7 +21,24 @@
                 <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300"><i
                         class="fas fa-video mr-1"></i>Live</a>
             </nav>
+            <button id="menu-button" class="md:hidden text-gray-300 focus:outline-none">
+                <i class="fas fa-bars text-3xl"></i> <!-- Aumente o tamanho do ícone de menu -->
+            </button>
         </div>
+    </div>
+    <div id="mobile-menu" class="md:hidden hidden flex flex-col items-center space-y-2 mt-2 text-lg">
+        <form action="{{ route('videos.search') }}" method="GET" class="flex items-center space-x-4 w-full">
+            <input name="search" type="text" placeholder="Search Video"
+                class="bg-gray-700 text-white px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 w-full">
+        </form>
+        <a href="{{ url('/') }}" class="text-gray-300 hover:text-white transition-colors duration-300"><i
+                class="fas fa-home mr-1"></i>Home</a>
+        <a href="{{ route('tags.index') }}" class="text-gray-300 hover:text-white transition-colors duration-300"><i
+                class="fas fa-tags mr-1"></i>Tags</a>
+        <a href="{{ url('/random') }}" class="text-gray-300 hover:text-white transition-colors duration-300"><i
+                class="fas fa-random mr-1"></i>Random</a>
+        <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300"><i
+                class="fas fa-video mr-1"></i>Live</a>
     </div>
 </header>
 <div class="mt-20"></div> <!-- Add this for testing scroll -->
@@ -56,22 +73,28 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 </style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const header = document.getElementById('header');
         const iconHeader = document.getElementById('icon-header');
+        const menuButton = document.getElementById('menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
 
         window.addEventListener('scroll', function() {
             if (window.scrollY > 0) {
                 header.classList.add('sticky');
                 iconHeader.classList.add('w50');
                 iconHeader.classList.remove('w90');
-
             } else {
                 header.classList.remove('sticky');
                 iconHeader.classList.remove('w50');
                 iconHeader.classList.add('w90');
             }
+        });
+
+        menuButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
         });
     });
 </script>
