@@ -16,6 +16,8 @@ class Kernel extends ConsoleKernel
         // Register the command here
         \App\Console\Commands\FetchVideos::class,
         Commands\CheckInactiveVideos::class,
+        \App\Console\Commands\GenerateSitemap::class,
+
     ];
 
     /**
