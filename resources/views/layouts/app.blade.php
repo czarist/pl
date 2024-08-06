@@ -2,13 +2,13 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <title>{{ $default_title ?? 'Porn Rooster' }}</title>
+    <title>Porn Rooster - {{ $default_title ?? '' }}</title>
     <meta name="description" content="{{ $default_description ?? 'The best free adult content' }}">
     <meta name="author" content="czarist">
     <meta name="rating" content="adult">
 
     <meta name="keywords" content="{{ $default_keywords ?? 'free, adult, content, videos, porn' }}">
-    <meta property="og:title" content="{{ $default_title ?? 'Porn Rooster' }}">
+    <meta property="og:title" content="Porn Rooster - {{ $default_title ?? '' }}">
     <meta property="og:description" content="{{ $default_description ?? 'The best free adult content' }}">
     <meta property="og:image"
         content="{{ isset($isVideoPage) && $isVideoPage ? $page_thumb ?? asset('icon.png') : asset('icon.png') }}">
@@ -42,6 +42,8 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="{{ asset('icon.ico') }}" type="image/x-icon">
 
     @if (isset($isVideoPage) && $isVideoPage)
         <meta property="og:video" content="{{ $video->url }}">
