@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\URL;
 
 class GenerateSitemap extends Command
 {
-    // php artisan generate:sitemap
-
     protected $signature = 'generate:sitemap';
     protected $description = 'Generate the sitemap for the website';
 
@@ -122,3 +120,4 @@ class GenerateSitemap extends Command
         return htmlspecialchars($string, ENT_XML1, 'UTF-8');
     }
 }
+// php artisan generate:sitemap

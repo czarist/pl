@@ -13,11 +13,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        // Register the command here
         \App\Console\Commands\FetchVideos::class,
-        Commands\CheckInactiveVideos::class,
+        \App\Console\Commands\CheckInactiveVideos::class,
         \App\Console\Commands\GenerateSitemap::class,
-
     ];
 
     /**
@@ -28,8 +26,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // Define the command schedule here, if needed
-        // Example: $schedule->command('videos:fetch eporner')->daily();
+        $schedule->command('videos:check-inactive')
+            ->hourly()
+            ->then(function () {
+                $this->call('videos:fetch');
+                $this->call('generate:sitemap');
+            });
     }
 
     /**
