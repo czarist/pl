@@ -20,8 +20,6 @@
                         class="fas fa-random mr-1"></i>Random</a>
                 <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300"><i
                         class="fas fa-video mr-1"></i>Live</a>
-                <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300"><i
-                        class="fas fa-envelope mr-1"></i>Contact</a>
             </nav>
         </div>
     </div>

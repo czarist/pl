@@ -15,6 +15,8 @@ class VideoGalleryController extends Controller
     {
         $default_title = 'Home' . " Page " . $page;
         $default_description = "the best free adult content";
+        $default_keywords = "free, adult, content, videos";
+
         $paginator = Video::with(['tags', 'thumbs'])
             ->orderBy('views', 'desc')
             ->paginate(20, ['*'], 'page', $page);
@@ -31,6 +33,7 @@ class VideoGalleryController extends Controller
             ),
             'default_title' => $default_title,
             'default_description' => $default_description,
+            'default_keywords' => $default_keywords,
         ]);
     }
 
@@ -44,6 +47,7 @@ class VideoGalleryController extends Controller
 
         $default_title = 'Tag: ' . $tag . " Page $page";
         $default_description = 'Content tagged with ' . $tag;
+        $default_keywords = 'tag, ' . $tag;
 
         $paginator = Video::whereHas('tags', function ($query) use ($tag) {
             $query->where('tag_name', $tag);
@@ -65,6 +69,7 @@ class VideoGalleryController extends Controller
             'tag' => $tag,
             'default_title' => $default_title,
             'default_description' => $default_description,
+            'default_keywords' => $default_keywords,
         ]);
     }
 
@@ -77,6 +82,7 @@ class VideoGalleryController extends Controller
 
         $default_title = 'Search Results for: ' . $searchTerm . ' - Page ' . $page;
         $default_description = 'Videos matching the search term: ' . $searchTerm;
+        $default_keywords = 'search, ' . $searchTerm;
 
         $paginator = Video::where('title', 'like', '%' . $searchTerm . '%')
             ->orWhere('keywords', 'like', '%' . $searchTerm . '%')
@@ -100,6 +106,7 @@ class VideoGalleryController extends Controller
             'searchTerm' => $searchTerm,
             'default_title' => $default_title,
             'default_description' => $default_description,
+            'default_keywords' => $default_keywords,
         ]);
     }
 
@@ -184,12 +191,14 @@ class VideoGalleryController extends Controller
 
         $default_title = 'Tag Page - Best Tags';
         $default_description = 'Explore the best tags for our video content.';
+        $default_keywords = 'tags, best tags, popular tags';
 
         return view('tags.index', [
             'groupedTags' => $formattedTags,
             'letters' => $letters,
             'default_title' => $default_title,
             'default_description' => $default_description,
+            'default_keywords' => $default_keywords,
         ]);
     }
 
@@ -203,6 +212,7 @@ class VideoGalleryController extends Controller
 
         $default_title = $video->title;
         $default_description = $video->keywords;
+        $default_keywords = implode(', ', $video->tags->pluck('tag_name')->toArray());
         $page_thumb = $video->thumbs->first()->src ?? asset('icon.png');
 
         $relatedVideos = Video::whereHas('tags', function ($query) use ($video) {
@@ -215,7 +225,7 @@ class VideoGalleryController extends Controller
 
         $isVideoPage = true;
 
-        return view('video.show', compact('video', 'relatedVideos', 'isRelated', 'default_title', 'default_description', 'page_thumb', 'isVideoPage'));
+        return view('video.show', compact('video', 'relatedVideos', 'isRelated', 'default_title', 'default_description', 'default_keywords', 'page_thumb', 'isVideoPage'));
     }
 
     private function normalizeTitle(string $title)

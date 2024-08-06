@@ -1,2 +1,39 @@
+# robots.txt para Porn Rooster
+
+# Bloquear todos os bots de acessar o painel administrativo
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /login/
+Disallow: /register/
+Disallow: /user/
+
+# Permitir que todos os bots acessem o conteúdo principal
+User-agent: *
+Allow: /
+Allow: /video/
+Allow: /tags/
+Allow: /tag/
+Allow: /search/
+
+# Proibir a indexação de conteúdos sensíveis ou duplicados
+Disallow: /private/
+Disallow: /temp/
+Disallow: /duplicate-content/
+Disallow: /scripts/
+Disallow: /cgi-bin/
+
+# Diretrizes para o rastreamento de conteúdo adulto
+User-agent: *
+Disallow: /explicit/
+Disallow: /adult-content/
+
+# Sitemap
+Sitemap: https://www.pornrooster.com/sitemap.xml
+
+# Bloquear bots específicos (exemplo)
+User-agent: BadBot
+Disallow: /
+
+# Permitir que todos os bots acessem o conteúdo público
+User-agent: *
+Allow: /
