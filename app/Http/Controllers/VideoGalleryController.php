@@ -7,6 +7,7 @@ use App\Models\Thumb;
 use App\Models\Video;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\URL;
 
 class VideoGalleryController extends Controller
 {
@@ -228,10 +229,22 @@ class VideoGalleryController extends Controller
         return view('video.show', compact('video', 'relatedVideos', 'isRelated', 'default_title', 'default_description', 'default_keywords', 'page_thumb', 'isVideoPage'));
     }
 
+    public function randomVideo()
+    {
+        $video = Video::inRandomOrder()->first();
+
+        $sanitizedTitle = $this->normalizeTitle($video->title);
+
+        $url = URL::to("/video/{$video->video_id}/{$sanitizedTitle}");
+
+        return redirect($url);
+    }
+
     private function normalizeTitle(string $title)
     {
         $title = preg_replace('/[^A-Za-z0-9]+/', '-', $title);
         $title = strtolower($title);
         return trim(preg_replace('/-+/', '-', $title), '-');
     }
+
 }

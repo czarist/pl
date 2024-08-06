@@ -16,7 +16,7 @@
                 <a href="{{ route('tags.index') }}"
                     class="text-gray-300 hover:text-white transition-colors duration-300"><i
                         class="fas fa-tags mr-1"></i>Tags</a>
-                <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300"><i
+                <a href="{{ url('/random') }}" class="text-gray-300 hover:text-white transition-colors duration-300"><i
                         class="fas fa-random mr-1"></i>Random</a>
                 <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300"><i
                         class="fas fa-video mr-1"></i>Live</a>

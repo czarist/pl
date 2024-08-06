@@ -46,7 +46,7 @@ class GenerateSitemap extends Command
         $videos = \App\Models\Video::all();
         foreach ($videos as $video) {
             $sanitizedTitle = $this->sanitizeTitle($video->title);
-            $loc = URL::to("/video/{$video->id}/{$sanitizedTitle}");
+            $loc = URL::to("/video/{$video->video_id}/{$sanitizedTitle}");
             $urls[] = [
                 'loc' => $loc,
                 'priority' => '0.9',

@@ -10,3 +10,4 @@ Route::view('/404', 'errors.404')->name('error.404');
 Route::get('/tags', [VideoGalleryController::class, 'tags'])->name('tags.index');
 Route::get('/tag/{tag}', [VideoGalleryController::class, 'galleryByTag']);
 Route::get('/search', [VideoGalleryController::class, 'searchVideos'])->name('videos.search');
+Route::get('/random', [VideoGalleryController::class, 'randomVideo']);
