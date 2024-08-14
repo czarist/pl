@@ -5,7 +5,7 @@
         <h1 class="text-2xl font-bold mb-6">Tags</h1>
 
         <!-- Formulário de pesquisa -->
-        <div class="mb-6 relative">
+        <div style="display: none" class="mb-6 relative">
             <input id="search" type="text" placeholder="Search tags..."
                 class="w-full p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
 
