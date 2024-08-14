@@ -63,6 +63,52 @@
             const letterSelect = document.getElementById('letter-select');
             const loadingSpinner = document.getElementById('loading-spinner');
 
+            // Função debounce para melhorar a performance do search
+            function debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    const context = this;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(context, args), wait);
+                };
+            }
+
+            // Função de pesquisa otimizada
+            const searchTags = debounce(function() {
+                loadingSpinner.classList.remove('hidden');
+                let filter = searchInput.value.toLowerCase();
+
+                setTimeout(() => {
+                    if (filter === '') {
+                        letterSections.forEach(section => {
+                            section.style.display = '';
+                        });
+                    }
+
+                    tagItems.forEach(item => {
+                        let text = item.innerText.toLowerCase();
+                        if (text.includes(filter)) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+
+                    letterSections.forEach(section => {
+                        let hasVisibleTags = Array.from(section.nextElementSibling
+                                .querySelectorAll('.tag-item'))
+                            .some(item => item.style.display !== 'none');
+                        section.style.display = hasVisibleTags ? '' : 'none';
+                    });
+
+                    loadingSpinner.classList.add('hidden');
+                }, 500);
+            }, 300); // Espera de 300ms para debounce
+
+            // Evento de digitação com debounce
+            searchInput.addEventListener('input', searchTags);
+
+            // Navegação por letras
             letterSelect.addEventListener('change', function() {
                 let targetId = this.value;
                 if (targetId) {
@@ -72,43 +118,6 @@
                             behavior: 'smooth'
                         });
                     }
-                }
-            });
-
-            searchInput.addEventListener('keydown', function(event) {
-                if (event.key === 'Enter') {
-                    event.preventDefault(); // Evita o comportamento padrão do Enter
-                    loadingSpinner.classList.remove('hidden'); // Mostra o spinner de loading
-
-                    setTimeout(() => { // Simula um pequeno atraso para exibir o loading
-                        let filter = searchInput.value.toLowerCase();
-
-                        if (filter === '') {
-                            letterSections.forEach(section => {
-                                section.style.display = '';
-                            });
-                        }
-
-                        tagItems.forEach(item => {
-                            let text = item.innerText.toLowerCase();
-                            if (text.includes(filter)) {
-                                item.style.display = '';
-                            } else {
-                                item.style.display = 'none';
-                            }
-                        });
-
-                        letterSections.forEach(section => {
-                            let hasVisibleTags = Array.from(section.nextElementSibling
-                                    .querySelectorAll(
-                                        '.tag-item'))
-                                .some(item => item.style.display !== 'none');
-                            section.style.display = hasVisibleTags ? '' : 'none';
-                        });
-
-                        loadingSpinner.classList.add(
-                        'hidden'); // Oculta o spinner após o processamento
-                    }, 500); // Duração do "loading" em milissegundos
                 }
             });
         });
