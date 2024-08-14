@@ -156,6 +156,7 @@ class VideoGalleryController extends Controller
                     ];
                 });
             });
+            
 
             $default_title = 'Tag Page - Best Tags';
             $default_description = 'Explore the best tags for our video content.';
