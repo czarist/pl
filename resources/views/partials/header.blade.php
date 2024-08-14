@@ -22,7 +22,7 @@
                         class="fas fa-video mr-1"></i>Live</a>
             </nav>
             <button id="menu-button" class="md:hidden text-gray-300 focus:outline-none">
-                <i class="fas fa-bars text-3xl"></i> <!-- Aumente o tamanho do ícone de menu -->
+                <i class="fas fa-bars text-3xl"></i>
             </button>
         </div>
     </div>
@@ -41,7 +41,15 @@
                 class="fas fa-video mr-1"></i>Live</a>
     </div>
 </header>
-<div class="mt-20"></div> <!-- Add this for testing scroll -->
+
+<!-- Add this for testing scroll -->
+<div class="mt-20"></div>
+
+<!-- Botão Voltar ao Topo -->
+<button id="back-to-top"
+    class="hidden fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg focus:outline-none">
+    <i class="fas fa-arrow-up"></i>
+</button>
 
 <style>
     body {
@@ -72,6 +80,21 @@
         position: fixed;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+
+    #back-to-top {
+        transition: opacity 0.3s;
+        z-index: 50000;
+    }
+
+    #back-to-top.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    #back-to-top.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
 </style>
 
 <script>
@@ -80,21 +103,33 @@
         const iconHeader = document.getElementById('icon-header');
         const menuButton = document.getElementById('menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
+        const backToTopButton = document.getElementById('back-to-top');
 
         window.addEventListener('scroll', function() {
             if (window.scrollY > 0) {
                 header.classList.add('sticky');
                 iconHeader.classList.add('w50');
                 iconHeader.classList.remove('w90');
+                backToTopButton.classList.add('show');
+                backToTopButton.classList.remove('hidden');
             } else {
                 header.classList.remove('sticky');
                 iconHeader.classList.remove('w50');
                 iconHeader.classList.add('w90');
+                backToTopButton.classList.add('hidden');
+                backToTopButton.classList.remove('show');
             }
         });
 
         menuButton.addEventListener('click', function() {
             mobileMenu.classList.toggle('hidden');
+        });
+
+        backToTopButton.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         });
     });
 </script>

@@ -3,10 +3,22 @@
 
 <head>
     <title>Porn Rooster - {{ $default_title ?? '' }}</title>
-    <meta name="description" content="{{ $default_description ?? 'The best free adult content' }}">
+    <meta name="description"
+        content="{{ $default_description ?? 'The best free adult content' }} {{ $default_keywords ?? '' }}">
     <meta name="author" content="czarist">
     <meta name="rating" content="adult">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3C6E0HSC19"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
 
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-3C6E0HSC19');
+    </script>
     <meta name="keywords" content="{{ $default_keywords ?? 'free, adult, content, videos, porn' }}">
     <meta property="og:title" content="Porn Rooster - {{ $default_title ?? '' }}">
     <meta property="og:description" content="{{ $default_description ?? 'The best free adult content' }}">

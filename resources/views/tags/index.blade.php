@@ -5,20 +5,34 @@
         <h1 class="text-2xl font-bold mb-6">Tags</h1>
 
         <!-- Formulário de pesquisa -->
-        <div class="mb-6">
+        <div class="mb-6 relative">
             <input id="search" type="text" placeholder="Search tags..."
                 class="w-full p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+            <!-- Ícone de loading -->
+            <div id="loading-spinner" class="hidden absolute right-2 top-1/2 transform -translate-y-1/2">
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                    </circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291l2.414-2.414a1 1 0 011.414 0l5.293 5.293-1.414 1.414-4.879-4.879-2.414 2.414a1 1 0 01-1.414 0L6 17.291z">
+                    </path>
+                </svg>
+            </div>
         </div>
 
-        <!-- Box fixo com as letras -->
-        <div id="letter-box"
-            class="hidden sm:flex flex-wrap justify-center bg-gray-900 rounded-lg shadow-lg p-4 mb-6 lg:fixed lg:top-16 lg:left-1/2 lg:transform lg:-translate-x-1/2 lg:bg-gray-900 lg:rounded-lg lg:shadow-lg z-50">
-            @foreach ($letters as $letter)
-                <a href="#{{ $letter === '#' ? 'special-characters' : $letter }}"
-                    class="block text-white text-xl hover:text-blue-400 transition-colors duration-300 mx-2">
-                    {{ $letter }}
-                </a>
-            @endforeach
+        <!-- Seletor de letras fixo para mobile e desktop -->
+        <div class="mb-6">
+            <select id="letter-select"
+                class="w-full p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Select a letter...</option>
+                @foreach ($letters as $letter)
+                    <option value="{{ $letter === '#' ? 'special-characters' : $letter }}">
+                        {{ $letter }}
+                    </option>
+                @endforeach
+            </select>
         </div>
 
         <div id="tag-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -31,12 +45,8 @@
                 </div>
                 @foreach ($tags as $tag)
                     <div class="bg-gray-800 p-4 rounded-lg shadow-lg tag-item relative overflow-hidden">
-                        @if ($tag['thumb_src'])
-                            <img src="{{ $tag['thumb_src'] }}" alt="{{ $tag['tag_title'] }}"
-                                class="w-full h-32 object-cover rounded-lg">
-                        @endif
                         <a href="{{ url('/tag/' . $tag['tag']) }}"
-                            class="absolute inset-0 flex items-center justify-center text-white bg-black bg-opacity-50 hover:bg-opacity-0 transition-all duration-300">
+                            class="flex items-center justify-center text-white hover:text-blue-400 transition-all duration-300">
                             <i class="fas fa-tag mr-2"></i>{{ $tag['tag_title'] }}
                         </a>
                     </div>
@@ -47,78 +57,69 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const anchors = document.querySelectorAll('#letter-box a');
             const searchInput = document.getElementById('search');
             const tagItems = document.querySelectorAll('.tag-item');
             const letterSections = document.querySelectorAll('.letter-section');
-            const letterBox = document.getElementById('letter-box');
+            const letterSelect = document.getElementById('letter-select');
+            const loadingSpinner = document.getElementById('loading-spinner');
 
-            anchors.forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    let targetId = this.getAttribute('href').substring(1);
+            letterSelect.addEventListener('change', function() {
+                let targetId = this.value;
+                if (targetId) {
                     let target = document.getElementById(targetId);
                     if (target) {
-                        anchors.forEach(a => a.classList.remove('text-blue-400', 'font-bold'));
-                        this.classList.add('text-blue-400', 'font-bold');
                         target.scrollIntoView({
                             behavior: 'smooth'
                         });
                     }
-                });
-            });
-
-            searchInput.addEventListener('keyup', function() {
-                let filter = searchInput.value.toLowerCase();
-                if (filter === '') {
-                    letterSections.forEach(section => {
-                        section.style.display = '';
-                    });
                 }
-
-                tagItems.forEach(item => {
-                    let text = item.innerText.toLowerCase();
-                    if (text.includes(filter)) {
-                        item.style.display = '';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-
-                letterSections.forEach(section => {
-                    let hasVisibleTags = Array.from(section.nextElementSibling.querySelectorAll(
-                            '.tag-item'))
-                        .some(item => item.style.display !== 'none');
-                    section.style.display = hasVisibleTags ? '' : 'none';
-                });
             });
 
-            window.addEventListener('scroll', function() {
-                const topOffset = letterBox.getBoundingClientRect().top;
-                if (topOffset <= 80) {
-                    letterBox.classList.add('is-sticky');
-                } else {
-                    letterBox.classList.remove('is-sticky');
+            searchInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Evita o comportamento padrão do Enter
+                    loadingSpinner.classList.remove('hidden'); // Mostra o spinner de loading
+
+                    setTimeout(() => { // Simula um pequeno atraso para exibir o loading
+                        let filter = searchInput.value.toLowerCase();
+
+                        if (filter === '') {
+                            letterSections.forEach(section => {
+                                section.style.display = '';
+                            });
+                        }
+
+                        tagItems.forEach(item => {
+                            let text = item.innerText.toLowerCase();
+                            if (text.includes(filter)) {
+                                item.style.display = '';
+                            } else {
+                                item.style.display = 'none';
+                            }
+                        });
+
+                        letterSections.forEach(section => {
+                            let hasVisibleTags = Array.from(section.nextElementSibling
+                                    .querySelectorAll(
+                                        '.tag-item'))
+                                .some(item => item.style.display !== 'none');
+                            section.style.display = hasVisibleTags ? '' : 'none';
+                        });
+
+                        loadingSpinner.classList.add(
+                        'hidden'); // Oculta o spinner após o processamento
+                    }, 500); // Duração do "loading" em milissegundos
                 }
             });
         });
     </script>
 
     <style>
-        #letter-box.is-sticky {
-            position: fixed;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 50;
-            background: #1a202c;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
         .tag-item a {
             transition: background-color 0.3s, color 0.3s;
+            display: block;
+            padding: 1rem;
+            text-align: center;
         }
 
         .tag-item a:hover {

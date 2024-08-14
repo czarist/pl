@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tag;
-use App\Models\Thumb;
 use App\Models\Video;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
@@ -148,25 +147,12 @@ class VideoGalleryController extends Controller
 
             $letters = $groupedTags->keys()->toArray();
 
-            $usedThumbs = [];
-
-            $formattedTags = $groupedTags->map(function ($tags) use (&$usedThumbs) {
-                return $tags->map(function ($tag) use (&$usedThumbs) {
-                    $thumb = Thumb::join('videos', 'thumbs.video_id', '=', 'videos.id')
-                        ->join('tag_video', 'videos.id', '=', 'tag_video.video_id')
-                        ->where('tag_video.tag_id', $tag->id)
-                        ->whereNotIn('thumbs.id', $usedThumbs)
-                        ->select('thumbs.*')
-                        ->first();
-
-                    if ($thumb) {
-                        $usedThumbs[] = $thumb->id;
-                    }
-
+            $formattedTags = $groupedTags->map(function ($tags) {
+                return $tags->map(function ($tag) {
                     return [
                         'tag_title' => str_replace('-', ' ', $tag->tag_name),
                         'tag' => $tag->tag_name,
-                        'thumb_src' => $thumb ? $thumb->src : null,
+                        'thumb_src' => null, // Thumb source removido
                     ];
                 });
             });
