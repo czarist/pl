@@ -33,7 +33,18 @@ class GenerateSitemap extends Command
         }
 
         $urls = [
-            // Seu array de URLs fixos aqui
+            [
+                'loc' => URL::to('/'),
+                'priority' => '1.0',
+                'changefreq' => 'daily',
+                'lastmod' => now()->toAtomString(),
+            ],
+            [
+                'loc' => URL::to('/tags'),
+                'priority' => '0.7',
+                'changefreq' => 'daily',
+                'lastmod' => now()->toAtomString(),
+            ],
         ];
 
         // Adiciona URLs de vídeos e tags
