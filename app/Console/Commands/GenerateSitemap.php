@@ -14,109 +14,55 @@ class GenerateSitemap extends Command
     public function __construct()
     {
         parent::__construct();
-        date_default_timezone_set('America/Sao_Paulo');
     }
 
     public function handle()
     {
-        $this->info('Iniciando a geração do sitemap.');
-
-        $sitemapIndexPath = public_path('sitemap_index.xml');
-        $sitemapDir = public_path('sitemaps');
-
-        if (!File::exists($sitemapDir)) {
-            $this->info('Diretório de sitemaps não existe. Criando o diretório...');
-            File::makeDirectory($sitemapDir);
-        } else {
-            $this->info('Diretório de sitemaps já existe.');
-        }
+        $sitemapPath = public_path('sitemap.xml');
 
         $urls = [
+            [
+                'loc' => URL::to('/'),
+                'priority' => '1.0',
+                'changefreq' => 'daily',
+                'lastmod' => now()->toAtomString(),
+            ],
+            [
+                'loc' => URL::to('/tags'),
+                'priority' => '0.7',
+                'changefreq' => 'daily',
+                'lastmod' => now()->toAtomString(),
+            ],
+            [
+                'loc' => URL::to('/search'),
+                'priority' => '0.5',
+                'changefreq' => 'monthly',
+                'lastmod' => now()->toAtomString(),
+            ],
         ];
 
-        $this->addVideoUrls($urls);
-        $this->addTagUrls($urls);
-
-        $this->info('Total de URLs geradas: ' . count($urls));
-
-        $chunks = array_chunk($urls, 100);
-
-        $this->info('Total de chunks de URLs: ' . count($chunks));
-
-        $sitemapIndex = new \SimpleXMLElement('<sitemapindex/>');
-        $sitemapIndex->addAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
-
-        foreach ($chunks as $index => $chunk) {
-            $sitemapPath = $sitemapDir . "/sitemap_{$index}.xml";
-            $sitemapUrl = URL::to("sitemaps/sitemap_{$index}.xml");
-
-            $this->info("Gerando sitemap para o chunk {$index}...");
-            $xml = $this->generateSitemapXML($chunk);
-
-            if (File::put($sitemapPath, $xml)) {
-                $this->info("Sitemap gerado com sucesso: {$sitemapPath}");
-            } else {
-                $this->error("Erro ao salvar o sitemap: {$sitemapPath}");
-            }
-
-            $sitemap = $sitemapIndex->addChild('sitemap');
-            $sitemap->addChild('loc', $sitemapUrl);
-            $sitemap->addChild('lastmod', now()->toAtomString());
+        $videos = \App\Models\Video::all();
+        foreach ($videos as $video) {
+            $sanitizedTitle = $this->sanitizeTitle($video->title);
+            $loc = URL::to("/video/{$video->video_id}/{$sanitizedTitle}");
+            $urls[] = [
+                'loc' => $loc,
+                'priority' => '0.9',
+                'changefreq' => 'weekly',
+                'lastmod' => $video->updated_at->toAtomString(),
+                'video' => [
+                    'title' => $video->title,
+                    'description' => $video->keywords,
+                    'thumbnail_loc' => $video->thumbs->first()->src ?? asset('icon.png'),
+                    'duration' => $video->length_sec,
+                    'publication_date' => $video->created_at->toAtomString(),
+                    'expiration_date' => now()->addYears(1)->toAtomString(),
+                    'rating' => $video->rate,
+                ],
+            ];
         }
 
-        if (File::put($sitemapIndexPath, $sitemapIndex->asXML())) {
-            $this->info('Sitemap index gerado com sucesso.');
-        } else {
-            $this->error('Erro ao salvar o sitemap index.');
-        }
-
-        $this->info('Processo de geração do sitemap concluído.');
-    }
-
-    private function addVideoUrls(&$urls)
-    {
-        $this->info('Adicionando URLs de vídeos...');
-        $page = 1;
-        $perPage = 1000; 
-
-        do {
-            $videos = \App\Models\Video::orderBy('id')->paginate($perPage, ['*'], 'page', $page);
-            $totalVideos = $videos->count();
-
-            $this->info("Processando página {$page} com {$totalVideos} vídeos.");
-
-            foreach ($videos as $video) {
-                $sanitizedTitle = $this->sanitizeTitle($video->title);
-                $loc = URL::to("/video/{$video->video_id}/{$sanitizedTitle}");
-                $urls[] = [
-                    'loc' => $loc,
-                    'priority' => '0.9',
-                    'changefreq' => 'weekly',
-                    'lastmod' => $video->updated_at->toAtomString(),
-                    'video' => [
-                        'title' => $video->title,
-                        'description' => $video->keywords,
-                        'thumbnail_loc' => $video->thumbs->first()->src ?? asset('icon.png'),
-                        'duration' => $video->length_sec,
-                        'publication_date' => $video->created_at->toAtomString(),
-                        'expiration_date' => now()->addYears(1)->toAtomString(),
-                        'rating' => $video->rate,
-                    ],
-                ];
-            }
-
-            $page++;
-        } while ($totalVideos > 0);
-
-        $this->info('Todas as páginas foram processadas.');
-    }
-
-    private function addTagUrls(&$urls)
-    {
-        $this->info('Adicionando URLs de tags...');
         $tags = \App\Models\Tag::all();
-        $this->info('Total de tags encontradas: ' . count($tags));
-
         foreach ($tags as $tag) {
             $loc = URL::to("/tag/{$tag->tag_name}");
             $urls[] = [
@@ -126,11 +72,16 @@ class GenerateSitemap extends Command
                 'lastmod' => now()->toAtomString(),
             ];
         }
+
+        $xml = $this->generateSitemapXML($urls);
+
+        File::put($sitemapPath, $xml);
+
+        $this->info('Sitemap generated successfully.');
     }
 
     private function generateSitemapXML(array $urls)
     {
-        $this->info('Gerando XML para o chunk...');
         $xml = new \SimpleXMLElement('<urlset/>');
         $xml->addAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
         $xml->addAttribute('xmlns:video', 'http://www.google.com/schemas/sitemap-video/1.1');
