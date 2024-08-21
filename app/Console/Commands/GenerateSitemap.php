@@ -14,6 +14,7 @@ class GenerateSitemap extends Command
     public function __construct()
     {
         parent::__construct();
+        date_default_timezone_set('America/Sao_Paulo');
     }
 
     public function handle()
@@ -31,16 +32,13 @@ class GenerateSitemap extends Command
         }
 
         $urls = [
-            // Seu array de URLs fixos aqui
         ];
 
-        // Adiciona URLs de vídeos e tags
         $this->addVideoUrls($urls);
         $this->addTagUrls($urls);
 
         $this->info('Total de URLs geradas: ' . count($urls));
 
-        // Divida os URLs em chunks de 100
         $chunks = array_chunk($urls, 100);
 
         $this->info('Total de chunks de URLs: ' . count($chunks));
@@ -79,7 +77,7 @@ class GenerateSitemap extends Command
     {
         $this->info('Adicionando URLs de vídeos...');
         $page = 1;
-        $perPage = 1000; // Número de vídeos por página
+        $perPage = 1000; 
 
         do {
             $videos = \App\Models\Video::orderBy('id')->paginate($perPage, ['*'], 'page', $page);
