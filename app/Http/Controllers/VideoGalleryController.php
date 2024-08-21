@@ -14,6 +14,10 @@ class VideoGalleryController extends Controller
     public function index(int $page = 1)
     {
         $cacheKey = "gallery_home_page_{$page}";
+        
+        if (isset($_GET['page'])) {
+            $page = $_GET['page'];
+        }
 
         return Cache::remember($cacheKey, 60, function () use ($page) {
             $default_title = 'Home' . " Page " . $page;
@@ -43,6 +47,9 @@ class VideoGalleryController extends Controller
 
     public function galleryByTag(string $tag, int $page = 1)
     {
+        if (isset($_GET['page'])) {
+            $page = $_GET['page'];
+        }
         $cacheKey = "gallery_tag_{$tag}_page_{$page}";
 
         $tagModel = Tag::where('tag_name', $tag)->first();
@@ -83,6 +90,10 @@ class VideoGalleryController extends Controller
 
     public function searchVideos(int $page = 1)
     {
+        if (isset($_GET['page'])) {
+            $page = $_GET['page'];
+        }
+
         $searchTerm = Request::input('search');
         $cacheKey = "search_results_{$searchTerm}_page_{$page}";
 
@@ -156,7 +167,6 @@ class VideoGalleryController extends Controller
                     ];
                 });
             });
-            
 
             $default_title = 'Tag Page - Best Tags';
             $default_description = 'Explore the best tags for our video content.';

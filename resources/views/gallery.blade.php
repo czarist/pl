@@ -26,7 +26,7 @@
                             <i class="fas fa-chevron-left"></i>
                         </span>
                     @else
-                        <a href="{{ route('videos.page', ['page' => $videos->currentPage() - 1]) }}" rel="prev"
+                        <a href="{{ $videos->previousPageUrl() }}" rel="prev"
                             class="px-3 py-1 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-gray-700">
                             <i class="fas fa-chevron-left"></i>
                         </a>
@@ -36,8 +36,7 @@
                     <div class="flex items-center space-x-2">
                         <select onchange="location = this.value;" class="bg-gray-800 text-white rounded-md">
                             @for ($i = 1; $i <= $videos->lastPage(); $i++)
-                                <option value="{{ route('videos.page', ['page' => $i]) }}"
-                                    {{ $i == $videos->currentPage() ? 'selected' : '' }}>
+                                <option value="{{ $videos->url($i) }}" {{ $i == $videos->currentPage() ? 'selected' : '' }}>
                                     Page {{ $i }}
                                 </option>
                             @endfor
@@ -49,7 +48,7 @@
 
                     {{-- Next Page Link --}}
                     @if ($videos->hasMorePages())
-                        <a href="{{ route('videos.page', ['page' => $videos->currentPage() + 1]) }}" rel="next"
+                        <a href="{{ $videos->nextPageUrl() }}" rel="next"
                             class="px-3 py-1 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-gray-700">
                             <i class="fas fa-chevron-right"></i>
                         </a>
@@ -61,6 +60,7 @@
                 </nav>
             @endif
         </div>
+
     </div>
 @endsection
 
