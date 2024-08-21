@@ -18,29 +18,46 @@ class GenerateSitemap extends Command
 
     public function handle()
     {
-        $sitemapPath = public_path('sitemap.xml');
+        $sitemapIndexPath = public_path('sitemap.xml');
+        $sitemapDir = public_path('sitemaps');
+        
+        if (!File::exists($sitemapDir)) {
+            File::makeDirectory($sitemapDir);
+        }
 
         $urls = [
-            [
-                'loc' => URL::to('/'),
-                'priority' => '1.0',
-                'changefreq' => 'daily',
-                'lastmod' => now()->toAtomString(),
-            ],
-            [
-                'loc' => URL::to('/tags'),
-                'priority' => '0.7',
-                'changefreq' => 'daily',
-                'lastmod' => now()->toAtomString(),
-            ],
-            [
-                'loc' => URL::to('/search'),
-                'priority' => '0.5',
-                'changefreq' => 'monthly',
-                'lastmod' => now()->toAtomString(),
-            ],
+            // Seu array de URLs fixos aqui
         ];
 
+        // Adiciona URLs de vídeos e tags
+        $this->addVideoUrls($urls);
+        $this->addTagUrls($urls);
+
+        // Divida os URLs em chunks de 100
+        $chunks = array_chunk($urls, 100);
+
+        $sitemapIndex = new \SimpleXMLElement('<sitemapindex/>');
+        $sitemapIndex->addAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
+
+        foreach ($chunks as $index => $chunk) {
+            $sitemapPath = $sitemapDir . "/sitemap_{$index}.xml";
+            $sitemapUrl = URL::to("sitemaps/sitemap_{$index}.xml");
+            
+            $xml = $this->generateSitemapXML($chunk);
+            File::put($sitemapPath, $xml);
+
+            $sitemap = $sitemapIndex->addChild('sitemap');
+            $sitemap->addChild('loc', $sitemapUrl);
+            $sitemap->addChild('lastmod', now()->toAtomString());
+        }
+
+        File::put($sitemapIndexPath, $sitemapIndex->asXML());
+
+        $this->info('Sitemap index generated successfully.');
+    }
+
+    private function addVideoUrls(&$urls)
+    {
         $videos = \App\Models\Video::all();
         foreach ($videos as $video) {
             $sanitizedTitle = $this->sanitizeTitle($video->title);
@@ -61,7 +78,10 @@ class GenerateSitemap extends Command
                 ],
             ];
         }
+    }
 
+    private function addTagUrls(&$urls)
+    {
         $tags = \App\Models\Tag::all();
         foreach ($tags as $tag) {
             $loc = URL::to("/tag/{$tag->tag_name}");
@@ -72,12 +92,6 @@ class GenerateSitemap extends Command
                 'lastmod' => now()->toAtomString(),
             ];
         }
-
-        $xml = $this->generateSitemapXML($urls);
-
-        File::put($sitemapPath, $xml);
-
-        $this->info('Sitemap generated successfully.');
     }
 
     private function generateSitemapXML(array $urls)
