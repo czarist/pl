@@ -11,13 +11,14 @@ use Illuminate\Support\Facades\URL;
 
 class VideoGalleryController extends Controller
 {
-    public function index(int $page = 1)
+    public function index()
     {
-        $cacheKey = "gallery_home_page_{$page}";
-        
         if (isset($_GET['page'])) {
             $page = $_GET['page'];
+        } else {
+            $page = 1;
         }
+        $cacheKey = "gallery_home_page_{$page}";
 
         return Cache::remember($cacheKey, 60, function () use ($page) {
             $default_title = 'Home' . " Page " . $page;
