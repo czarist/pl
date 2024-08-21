@@ -15,6 +15,7 @@ class GenerateSitemap extends Command
     public function __construct()
     {
         parent::__construct();
+        ini_set('memory_limit', '512M');
     }
 
     public function handle()
