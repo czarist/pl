@@ -22,7 +22,7 @@ class GenerateSitemap extends Command
     {
         $this->info('Iniciando a geração do sitemap.');
 
-        $sitemapIndexPath = public_path('sitemap_index.xml');
+        $sitemapIndexPath = public_path('sitemap.xml');
         $sitemapDir = public_path('sitemaps');
 
         if (!File::exists($sitemapDir)) {
