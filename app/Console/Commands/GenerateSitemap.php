@@ -54,7 +54,7 @@ class GenerateSitemap extends Command
 
             $this->info("Gerando sitemap para o chunk {$index}...");
             $xml = $this->generateSitemapXML($chunk);
-            
+
             if (File::put($sitemapPath, $xml)) {
                 $this->info("Sitemap gerado com sucesso: {$sitemapPath}");
             } else {
@@ -78,28 +78,39 @@ class GenerateSitemap extends Command
     private function addVideoUrls(&$urls)
     {
         $this->info('Adicionando URLs de vídeos...');
-        $videos = \App\Models\Video::all();
-        $this->info('Total de vídeos encontrados: ' . count($videos));
+        $page = 1;
+        $perPage = 1000; // Número de vídeos por página
 
-        foreach ($videos as $video) {
-            $sanitizedTitle = $this->sanitizeTitle($video->title);
-            $loc = URL::to("/video/{$video->video_id}/{$sanitizedTitle}");
-            $urls[] = [
-                'loc' => $loc,
-                'priority' => '0.9',
-                'changefreq' => 'weekly',
-                'lastmod' => $video->updated_at->toAtomString(),
-                'video' => [
-                    'title' => $video->title,
-                    'description' => $video->keywords,
-                    'thumbnail_loc' => $video->thumbs->first()->src ?? asset('icon.png'),
-                    'duration' => $video->length_sec,
-                    'publication_date' => $video->created_at->toAtomString(),
-                    'expiration_date' => now()->addYears(1)->toAtomString(),
-                    'rating' => $video->rate,
-                ],
-            ];
-        }
+        do {
+            $videos = \App\Models\Video::orderBy('id')->paginate($perPage, ['*'], 'page', $page);
+            $totalVideos = $videos->count();
+
+            $this->info("Processando página {$page} com {$totalVideos} vídeos.");
+
+            foreach ($videos as $video) {
+                $sanitizedTitle = $this->sanitizeTitle($video->title);
+                $loc = URL::to("/video/{$video->video_id}/{$sanitizedTitle}");
+                $urls[] = [
+                    'loc' => $loc,
+                    'priority' => '0.9',
+                    'changefreq' => 'weekly',
+                    'lastmod' => $video->updated_at->toAtomString(),
+                    'video' => [
+                        'title' => $video->title,
+                        'description' => $video->keywords,
+                        'thumbnail_loc' => $video->thumbs->first()->src ?? asset('icon.png'),
+                        'duration' => $video->length_sec,
+                        'publication_date' => $video->created_at->toAtomString(),
+                        'expiration_date' => now()->addYears(1)->toAtomString(),
+                        'rating' => $video->rate,
+                    ],
+                ];
+            }
+
+            $page++;
+        } while ($totalVideos > 0);
+
+        $this->info('Todas as páginas foram processadas.');
     }
 
     private function addTagUrls(&$urls)
