@@ -15,6 +15,7 @@ class CheckInactiveVideos extends Command
     public function __construct(VideoService $videoService)
     {
         parent::__construct();
+        ini_set('memory_limit', '512M');
         $this->videoService = $videoService;
     }
 
