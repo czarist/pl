@@ -27,6 +27,7 @@ class VideoGalleryController extends Controller
 
             $paginator = Video::with(['tags', 'thumbs'])
                 ->orderBy('views', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->paginate(20, ['*'], 'page', $page);
 
             $mappedVideos = $this->mapVideos($paginator->items());
@@ -69,6 +70,7 @@ class VideoGalleryController extends Controller
             })
                 ->with(['tags', 'thumbs'])
                 ->orderBy('views', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->paginate(20, ['*'], 'page', $page);
 
             $mappedVideos = $this->mapVideos($paginator->items());
@@ -114,6 +116,7 @@ class VideoGalleryController extends Controller
                 })
                 ->with(['tags', 'thumbs'])
                 ->orderBy('views', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->paginate(20, ['*'], 'page', $page);
 
             $mappedVideos = $this->mapVideos($paginator->items());
