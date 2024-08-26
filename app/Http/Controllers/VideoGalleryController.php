@@ -26,7 +26,7 @@ class VideoGalleryController extends Controller
             $default_keywords = "free, adult, content, videos";
 
             $paginator = Video::with(['tags', 'thumbs'])
-                ->orderBy('created_at', 'desc')
+                ->orderBy('views', 'desc')
                 ->paginate(20, ['*'], 'page', $page);
 
             $mappedVideos = $this->mapVideos($paginator->items());
@@ -68,7 +68,7 @@ class VideoGalleryController extends Controller
                 $query->where('tag_name', $tag);
             })
                 ->with(['tags', 'thumbs'])
-                ->orderBy('created_at', 'desc')
+                ->orderBy('views', 'desc')
                 ->paginate(20, ['*'], 'page', $page);
 
             $mappedVideos = $this->mapVideos($paginator->items());
@@ -113,7 +113,7 @@ class VideoGalleryController extends Controller
                     $query->where('tag_name', 'like', '%' . $searchTerm . '%');
                 })
                 ->with(['tags', 'thumbs'])
-                ->orderBy('created_at', 'desc')
+                ->orderBy('views', 'desc')
                 ->paginate(20, ['*'], 'page', $page);
 
             $mappedVideos = $this->mapVideos($paginator->items());
