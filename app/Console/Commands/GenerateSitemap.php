@@ -29,7 +29,9 @@ class GenerateSitemap extends Command
             $this->info('Diretório de sitemaps não existe. Criando o diretório...');
             File::makeDirectory($sitemapDir);
         } else {
-            $this->info('Diretório de sitemaps já existe.');
+            $this->info('Diretório de sitemaps já existe. Excluindo sitemaps antigos...');
+            // Excluindo sitemaps antigos
+            File::cleanDirectory($sitemapDir);
         }
 
         $urls = [
@@ -53,8 +55,8 @@ class GenerateSitemap extends Command
 
         $this->info('Total de URLs geradas: ' . count($urls));
 
-        // Divida os URLs em chunks de 100
-        $chunks = array_chunk($urls, 100);
+        // Divida os URLs em chunks de 50000
+        $chunks = array_chunk($urls, 50000);
 
         $this->info('Total de chunks de URLs: ' . count($chunks));
 
