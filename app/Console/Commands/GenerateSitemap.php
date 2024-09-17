@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -114,13 +115,13 @@ class GenerateSitemap extends Command
                     'loc' => $loc,
                     'priority' => '0.9',
                     'changefreq' => 'weekly',
-                    'lastmod' => $video->updated_at,
+                    'lastmod' => Carbon::parse($video->updated_at)->toAtomString(), // Ajuste aqui
                     'video' => [
                         'title' => $video->title,
                         'description' => $video->keywords,
                         'thumbnail_loc' => $video->thumbnail_url ?? asset('icon.png'),
                         'duration' => $video->length_sec,
-                        'publication_date' => $video->created_at,
+                        'publication_date' => Carbon::parse($video->created_at)->toAtomString(), // Ajuste aqui
                         'expiration_date' => now()->addYears(1)->toAtomString(),
                         'rating' => $video->rate,
                     ],
